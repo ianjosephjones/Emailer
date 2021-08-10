@@ -1,0 +1,4 @@
+When adding a new email html document for testing:
+	- r-clieck, add, existing file
+	- select the new html file and 'add as a link'
+	- then set the Cop to Output Directory as Copy if Newer
