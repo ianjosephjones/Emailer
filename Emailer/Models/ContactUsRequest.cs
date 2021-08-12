@@ -23,5 +23,8 @@ namespace Emailer.Models
         [Required]
         [MaxLength(2000)]
         public string HowSoon { get; set; }
+
+        [MaxLength(15)]
+        public string PhoneNumber { get; set; }
     }
 }

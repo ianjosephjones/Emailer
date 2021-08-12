@@ -17,7 +17,9 @@ namespace Emailer.Test
                 FirstName = "TestFirstName",
                 LastName = "TestLastName",
                 Email = "test@test.com",
-                Message = "This is a test message"
+                Message = "This is a test message",
+                HowSoon = "test",
+                PhoneNumber = "5612223333"
             });
 
             Assert.IsFalse(result.Contains("{{FirstName}}"));

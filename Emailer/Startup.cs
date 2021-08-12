@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Net;
-using System.Net.Mail;
+using SendGrid;
 
 namespace Emailer
 {
@@ -46,15 +45,7 @@ namespace Emailer
             services.AddScoped<ITokenizationService, TokenizationService>();
             services.AddScoped(implementationFactory =>
             {
-                return new SmtpClient()
-                {
-                    Host = _emailsettings.SmtpHost,
-                    Port = _emailsettings.SmtpPort,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    EnableSsl = true,
-                    Credentials = new NetworkCredential(_emailsettings.SmtpUser, _emailsettings.SmtpPass),
-                    UseDefaultCredentials = false,
-                };
+                return new SendGridClient(Configuration.GetValue<string>("Email:SENDGRID_API_KEY"));
             });
             services.AddControllers();
         }

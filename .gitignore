@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Emailer/.config/dotnet-tools.json
+/Emailer/Properties/ServiceDependencies/Emailer20210811113143 - Web Deploy/profile.arm.json

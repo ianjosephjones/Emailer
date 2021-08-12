@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using Emailer.Helpers;
 using Emailer.Models;
 using Emailer.Services;
 using Microsoft.AspNetCore.Mvc;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Emailer.Controllers
 {
@@ -12,16 +13,18 @@ namespace Emailer.Controllers
     [ApiController]
     public class ContactUsController : ControllerBase
     {
-        private SmtpClient _smtpClient;
+        #region ctor
+        private SendGridClient _smtpClient;
         private readonly ITokenizationService _tokenizationService;
         private readonly EmailSettings _emailSettings;
 
-        public ContactUsController(ITokenizationService tokenizationService, SmtpClient smtpClient, EmailSettings emailSettings)
+        public ContactUsController(ITokenizationService tokenizationService, SendGridClient smtpClient, EmailSettings emailSettings)
         {
             _smtpClient = smtpClient;
             _emailSettings = emailSettings;
             _tokenizationService = tokenizationService;
-        }
+        } 
+        #endregion
 
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ContactUsRequest contactUsRequest)
@@ -35,10 +38,24 @@ namespace Emailer.Controllers
                 try
                 {
                     var tokenizedHtml = await _tokenizationService.ReplaceTokens(Constants.CONTACT_US_HTML, contactUsRequest);
-                    _smtpClient.Send(new MailMessage(_emailSettings.SystemAddress, Constants.CONTACT_US_TO_EMAIL, Constants.CONTACT_US_SUBJECT, tokenizedHtml) { IsBodyHtml = true });
+                    await _smtpClient.SendEmailAsync(MailHelper.CreateSingleEmail(
+                        new EmailAddress(_emailSettings.SystemAddress),
+                        new EmailAddress(Constants.CONTACT_US_TO_EMAIL), 
+                        Constants.CONTACT_US_SUBJECT, 
+                        null, 
+                        tokenizedHtml));
+
+                    var thankyouHtml = await _tokenizationService.ReplaceTokens(Constants.THANK_YOU_HTML, contactUsRequest);
+                    await _smtpClient.SendEmailAsync(MailHelper.CreateSingleEmail(
+                        new EmailAddress(_emailSettings.SystemAddress),
+                        new EmailAddress(contactUsRequest.Email),
+                        Constants.CONTACT_US_SUBJECT,
+                        null,
+                        thankyouHtml));
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Exception!!! " + ex.Message);
                     throw;
                 }
 

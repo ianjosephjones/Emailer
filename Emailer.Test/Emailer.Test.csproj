@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Emailer\Emailer.csproj" />
+    <ProjectReference Include="..\Emailer\Emailer.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
