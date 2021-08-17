@@ -39,19 +39,19 @@ namespace Emailer.Controllers
                 {
                     var tokenizedHtml = await _tokenizationService.ReplaceTokens(Constants.CONTACT_US_HTML, contactUsRequest);
                     await _smtpClient.SendEmailAsync(MailHelper.CreateSingleEmail(
-                        new EmailAddress(_emailSettings.SystemAddress),
-                        new EmailAddress(Constants.CONTACT_US_TO_EMAIL), 
-                        Constants.CONTACT_US_SUBJECT, 
-                        null, 
-                        tokenizedHtml));
+                        from: new EmailAddress(_emailSettings.SystemAddress),
+                        to: new EmailAddress(Constants.CONTACT_US_TO_EMAIL), 
+                        subject: Constants.CONTACT_US_SUBJECT,
+                        plainTextContent: null,
+                        htmlContent: tokenizedHtml));
 
                     var thankyouHtml = await _tokenizationService.ReplaceTokens(Constants.THANK_YOU_HTML, contactUsRequest);
                     await _smtpClient.SendEmailAsync(MailHelper.CreateSingleEmail(
-                        new EmailAddress(_emailSettings.SystemAddress),
-                        new EmailAddress(contactUsRequest.Email),
-                        Constants.CONTACT_US_SUBJECT,
-                        null,
-                        thankyouHtml));
+                        from: new EmailAddress(_emailSettings.SystemAddress),
+                        to: new EmailAddress(contactUsRequest.Email),
+                        subject: Constants.THANK_YOU_SUBJECT,
+                        plainTextContent: null,
+                        htmlContent: thankyouHtml));
                 }
                 catch (Exception ex)
                 {
