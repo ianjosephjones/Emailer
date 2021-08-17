@@ -24,7 +24,7 @@ namespace Emailer.Controllers
             _emailSettings = emailSettings;
             _tokenizationService = tokenizationService;
         } 
-        #endregion
+        #endregion              
 
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ContactUsRequest contactUsRequest)
@@ -40,7 +40,7 @@ namespace Emailer.Controllers
                     var tokenizedHtml = await _tokenizationService.ReplaceTokens(Constants.CONTACT_US_HTML, contactUsRequest);
                     await _smtpClient.SendEmailAsync(MailHelper.CreateSingleEmail(
                         from: new EmailAddress(_emailSettings.SystemAddress),
-                        to: new EmailAddress(Constants.CONTACT_US_TO_EMAIL), 
+                        to: new EmailAddress(_emailSettings.SystemAddress), 
                         subject: Constants.CONTACT_US_SUBJECT,
                         plainTextContent: null,
                         htmlContent: tokenizedHtml));
