@@ -11,7 +11,8 @@ namespace Emailer
 {
     public class Startup
     {
-        readonly string CorsAllowedOriginsPolicy = "_corsAllowedOriginsPolicy";
+        readonly string CorsAllowedAnyOriginsPolicy = "_corsAllowedOriginsPolicy";
+        readonly string CorsProductionPolicy = "_corsProduction";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,7 +26,7 @@ namespace Emailer
             // Setup - CORS
             services.AddCors(options =>
             {
-                options.AddPolicy(name: CorsAllowedOriginsPolicy,
+                options.AddPolicy(name: CorsAllowedAnyOriginsPolicy,
                     builder =>
                     {
                         // TODO: limit CORS
@@ -33,6 +34,15 @@ namespace Emailer
                             .AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
+                    });
+                options.AddPolicy(name: CorsProductionPolicy,
+                    builder =>
+                    {
+                        // TODO: limit CORS
+                        builder
+                            .WithOrigins("https://www.enigmaagency.co")
+                            .AllowAnyHeader()
+                            .WithMethods("POST");
                     });
             });
 
@@ -53,10 +63,18 @@ namespace Emailer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseCors(CorsAllowedAnyOriginsPolicy);
+                app.UseDeveloperExceptionPage();
+            } 
+            else
+            {
+                app.UseCors(CorsProductionPolicy);
+            }
+
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors(CorsAllowedOriginsPolicy);
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

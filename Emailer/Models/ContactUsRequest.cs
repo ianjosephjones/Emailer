@@ -26,5 +26,7 @@ namespace Emailer.Models
 
         [MaxLength(15)]
         public string PhoneNumber { get; set; }
+
+        public string Package { get; set; }
     }
 }
